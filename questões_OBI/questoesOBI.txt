@@ -1,0 +1,22 @@
+#IDADE DE CAMILA
+c1 = int(input())
+c2 = int(input())
+c3 = int(input())
+if c1 <= c2 and c2 <= c3 or c3 <= c2 and c2 <= c1:
+    print(c2)
+elif c2 <= c1 and c1 <= c3 or c3 <= c1 and c1 <= c2:
+    print(c1)
+else:
+    print(c3)
+    
+#OUTRA QUESTAO
+
+qt = int(input())
+num = 0
+nums = []
+for v in range(qt):
+    num = int(input())
+    if num == 0:
+        nums.pop(len(nums)-1)
+    nums.append(num)
+print(sum(nums))
