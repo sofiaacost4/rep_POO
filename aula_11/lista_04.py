@@ -4,6 +4,8 @@ class Contato:
         self.__nome = n
         self.__email = e
         self.__fone = f
+    def get_id(self):
+        return self.__id
     def get_nome(self):
         return self.__nome
     def get_email(self):
@@ -44,15 +46,20 @@ class ContatoUI:
             print(c)
     @classmethod
     def atualizar(cls):
-        
-        for x in cls.__contatos:
-            print(f"Dados atuais:{x}")
-            y = input("Deseja atualizar? 1 - Sim | 2 - Não")
-            if y != 2:
-                cls.__contatos.pop(0)
-                x = input("Dados atualizados:")
-                cls.__contatos.insert(1, x)
-            else: pass
+      id = int(input("Qual é o id que você deseja atualizar?"))
+      for i in cls.__contatos:
+        if i.get_id() == id:
+            print(i)
+        nome = input("Nome atualizado:")
+        email = input("Email atualizado:")
+        fone = input("Telefone atualizado:")
+        y = Contato(id, nome, email, fone)
+        cls.__contatos.remove(i)
+        cls.__contatos.append(y)
+        break
+
+
+
             
             
     @classmethod
