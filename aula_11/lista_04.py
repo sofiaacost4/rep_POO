@@ -46,21 +46,19 @@ class ContatoUI:
             print(c)
     @classmethod
     def atualizar(cls):
-      id = int(input("Qual é o id que você deseja atualizar?"))
-      for i in cls.__contatos:
-        if i.get_id() == id:
-            print(i)
-        nome = input("Nome atualizado:")
-        email = input("Email atualizado:")
-        fone = input("Telefone atualizado:")
-        y = Contato(id, nome, email, fone)
-        cls.__contatos.remove(i)
-        cls.__contatos.append(y)
-        break
-
-
-
-            
+        id = int(input("Qual é o id que você deseja atualizar? "))
+        for i in cls.__contatos:
+            if i.get_id() == id:
+                print(i)
+                nome = input("Nome atualizado: ")
+                email = input("Email atualizado: ")
+                fone = input("Telefone atualizado: ")
+                y = Contato(id, nome, email, fone)
+                cls.__contatos.remove(i)
+                cls.__contatos.append(y)
+                break
+        else:
+            print("Contato com esse ID não foi encontrado.")
             
     @classmethod
     def excluir(cls):
