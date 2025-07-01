@@ -12,6 +12,8 @@ class Pais:
         return self.__pop
     def get_area(self):
         return self.__area
+    def densidade(self):
+        return self.__pop / self.__area
     def __str__(self):
         return f"{self.__id} - {self.__nome} - {self.__pop} - {self.__area}"
 
@@ -69,27 +71,21 @@ class PaisUI:
                 cls.__paises.remove(i)
     @classmethod
     def maispopuloso(cls):
-        if not cls.__paises:
-            print("Nenhum país cadastrado.")
-            return
         maispop = cls.__paises[0]
-        for p in cls.__paises[1:]:
-            if p.get_pop() > maispop.get_pop():
-                maispop = p
-        print(f"País mais populoso: {maispop.get_nome()} ({maispop.get_pop()} habitantes)")
+        for c in cls.__paises[1:]:
+            if c.get_pop() > maispop.get_pop():
+                maispop = c
+        print(f"País mais populoso: {maispop.get_nome()}, com população de {maispop.get_pop()} habitantes.")
 
     @classmethod
     def maispovoado(cls):
-        if not cls.__paises:
-            print("Nenhum país cadastrado.")
-            return
         maispov = cls.__paises[0]
         for p in cls.__paises[1:]:
-            densidade_atual = p.get_pop() / p.get_area()
-            densidade_maior = maispov.get_pop() / maispov.get_area()
+            densidade_atual = p.densidade()
+            densidade_maior = maispov.densidade()
             if densidade_atual > densidade_maior:
                 maispov = p
-        densidade = maispov.get_pop() / maispov.get_area()
+        densidade = maispov.densidade()
         print(f"País mais povoado: {maispov.get_nome()} (densidade: {densidade:.2f} hab/km²)")
 
 PaisUI.main()
