@@ -15,6 +15,18 @@ class Paciente:
         return self.__telefone
     def get_nascim(self):
         return self.__nascim
+    def idade(self, pacientes):
+        cpf = input("Qual é o cpf da pessoa que deseja saber a idade? ")
+        for c in pacientes:
+            if c.get_cpf() == cpf:
+                print(c)
+                hj = datetime.now()
+                i = hj - c.get_nascim()
+                anos = (i.days // 365)
+                meses = (i.days % 365 // 30)
+                print(f"Idade de {c.get_nome()}: {anos} anos e {meses} meses.")
+                return
+        print("Cpf não encontrado.")
     def __str__(self):
         return f"Nome: {self.__nome} - Cpf: {self.__cpf} - Telefone: {self.__telefone} - Data de Nascimento: {self.__nascim}"
     
@@ -50,17 +62,8 @@ class PacienteUI:
             print(p)
     @classmethod
     def idade(cls):
-        cpf = input("Qual é o cpf da pessoa que deseja saber a idade? ")
         for c in cls.__pacientes:
-            if c.get_cpf() == cpf:
-                print(c)
-                hj = datetime.now()
-                i = hj - c.get_nascim()
-                anos = (i.days // 365)
-                meses = (i.days % 365 // 30)
-                print(f"Idade de {c.get_nome()}: {anos} anos e {meses} meses.")
-                return
-            print("Cpf não encontrado.")
+            c.idade(cls.__pacientes)
     @classmethod
     def alterar(cls):
         cpf = input("Qual é o cpf da pessoa cujos dados deseja alterar? ")
@@ -90,4 +93,211 @@ class PacienteUI:
                             cls.__pacientes.append(c)
                         break
 PacienteUI.main()
+
+
+#BOLETO
+
+from datetime import datetime
+from enum import Enum
+class Pagamento(Enum):
+    EmAberto = 0                                   
+    PagoParcial = 1
+    Pago = 2
+class Boleto:
+    def __init__(self, c, dE, dV, dP, vB, vP):
+        self.__codigo = c
+        self.__dtEmissao = dE
+        self.__dtVencim = dV
+        self.__vBoleto = vB
+        self.__vPago = vP
+        self.__dtPagto = dP
+        self.__situacao = Pagamento.EmAberto
+    def pagar(self, valorpago):
+        if valorpago == self.__vBoleto:
+            self.__situacao = Pagamento.Pago
+        if valorpago != 0 and valorpago < self.__vBoleto:
+            self.__situacao = Pagamento.PagoParcial
+    def situacao(self):
+        return self.__situacao
+    def get_c(self):
+        return self.__codigo
+    def get_vP(self):
+        return self.__vPago
+    def __str__(self):
+        return f"Código de barras: {self.__codigo}\nData de emissão: {self.__dtEmissao}\nData de vencimento: {self.__dtVencim}\nData de pagamento: {self.__dtPagto}\nValor do boleto: {self.__vBoleto}\nValor pago: {self.__vPago}"
+
+class BoletoUI:
+    __dados = []
+    __dadosantigos = []
+    @classmethod
+    def main(cls):
+        op = 0
+        while op != 6:
+            op = BoletoUI.menu()
+            if op == 1: BoletoUI.inserir()
+            if op == 2: BoletoUI.situacao()
+            if op == 3: BoletoUI.alterar()
+            if op == 4: BoletoUI.recuperar()
+            if op == 5: BoletoUI.listar()
+    @classmethod
+    def menu(cls):
+        print("1 - Inserir dados | 2 - Situação | 3 - Alterar | 4 - Recuperar | 5 - Listar | 6 - Fim")
+        return int(input("Escolha uma opção: "))
+    @classmethod
+    def inserir(cls):
+        c = (input("Código de barras: "))
+        dE = (input("(dd/mm/aaaa) <- Data de emissão do boleto: "))
+        dE_n = datetime.strptime(dE, "%d/%m/%Y")
+        dV = (input("(dd/mm/aaaa) <- Data de vencimento do boleto: "))
+        dV_n = datetime.strptime(dV, "%d/%m/%Y")
+        dP = input("(dd/mm/aaaa) <- Data de pagamento do boleto: ")
+        dP_n = datetime.strptime(dP, "%d/%m/%Y")
+        vB = (float(input("Valor do boleto: ")))
+        vP = (float(input("Valor pago: ")))
+        P = Boleto(c, dE_n, dV_n, dP_n, vB, vP)
+        cls.__dados.append(P)
+    @classmethod
+    def listar(cls):
+        for l in cls.__dados:
+            print(l)
+    @classmethod
+    def situacao(cls):
+        for l in cls.__dados:
+            l.pagar(l.get_vP())
+            print(l.situacao())
+    @classmethod
+    def alterar(cls):
+        cod = input("Qual é o código do boleto cujos dados deseja alterar? ")
+        for c in cls.__dados:
+            if c.get_c() == cod:
+                print(c)
+                cls.__dados.remove(c)
+                cls.__dadosantigos.append(c)
+                dE = (input("(dd/mm/aa) <- Data de emissão do boleto: "))
+                dE_n = datetime.strptime(dE, "%d/%m/%Y")
+                dV = (input("(dd/mm/aa) <- Data de vencimento do boleto: "))
+                dV_n = datetime.strptime(dV, "%d/%m/%Y")
+                dP = input("(dd/mm/aa) <- Data de pagamento do boleto: ")
+                dP_n = datetime.strptime(dP, "%d/%m/%Y")
+                vB = (float(input("Valor do boleto: ")))
+                vP = (float(input("Valor pago: ")))
+                N = Boleto(c.get_c(), dE_n, dV_n, dP_n, vB, vP)
+                cls.__dados.append(N)
+                break
+    @classmethod
+    def recuperar(cls):
+        cod = input("Qual é o código do boleto cujos dados deseja recuperar? ")
+        for c in cls.__dadosantigos:
+            if c.get_c() == cod:
+                e = input(f"Os dados antigos desse boleto são: \n{c}\nDeseja substituir? s - n \n")
+                if e == "s":
+                    for i in cls.__dados:
+                        if i.get_c() == cod:
+                            cls.__dados.remove(i)
+                            cls.__dados.append(c)
+                        break
+
+BoletoUI.main()
+
+
+#Contato
+
+from datetime import datetime
+
+class Contato:
+    def __init__(self,i, n, e, f, na):
+        self.__id = i
+        self.__nome = n
+        self.__email = e
+        self.__fone = f
+        self.__nasc = na
+    def get_id(self):
+        return self.__id
+    def get_nome(self):
+        return self.__nome
+    def get_email(self):
+        return self.__email
+    def get_fone(self):
+        return self.__fone
+    def get_nasc(self):
+        return self.__nasc
+    def __str__(self):
+        return f"{self.__id} - {self.__nome} - {self.__email} - {self.__fone} - {self.__nasc}"
+
+class ContatoUI:
+    __an = []
+    __contatos = []
+    @classmethod
+    def main(cls):
+        op = 0
+        while op != 7:
+            op = ContatoUI.menu()
+            if op == 1: ContatoUI.inserir()
+            if op == 2: ContatoUI.listar()
+            if op == 3: ContatoUI.atualizar()
+            if op == 4: ContatoUI.excluir()
+            if op == 5: ContatoUI.pesquisar()
+            if op == 6: ContatoUI.aniversariantes()
+    @classmethod
+    def menu(cls):
+        print("1 - Inserir | 2 - Listar | 3 - Atualizar | 4 - Excluir | 5 - Pesquisar | 6 - Aniversariantes | 7 - Fim")
+        return int(input("Escolha uma opção:"))
+    @classmethod
+    def inserir(cls):
+        id = int(input("Informe o id do contato: "))
+        nome = input("Informe o nome do contato: ")
+        email = input("Informe o email do contato: ")
+        fone = input("Informe o telefone do contato: ")
+        nasc = input("(dd/mm/aaaa) <- Informe a data de nascimento: ")
+        dt_nasc = datetime.strptime(nasc, "%d/%m/%Y")
+        C = Contato(id, nome, email, fone, dt_nasc)
+        cls.__contatos.append(C)
+    @classmethod
+    def listar(cls):
+        #print (cls.__contatos)
+        for c in cls.__contatos:
+            print(c)
+    @classmethod
+    def atualizar(cls):
+        id = int(input("Qual é o id que você deseja atualizar? "))
+        for i in cls.__contatos:
+            if i.get_id() == id:
+                print(i)
+                nome = input("Nome atualizado: ")
+                email = input("Email atualizado: ")
+                fone = input("Telefone atualizado: ")
+                nasc = input("(dd/mm/aaaa) <- Data de nascimento atualizada: ")
+                dt_nasc = datetime.strptime(nasc, "%d/%m/%Y")
+                y = Contato(id, nome, email, fone, dt_nasc)
+                cls.__contatos.remove(i)
+                cls.__contatos.append(y)
+                break
+        else:
+            print("Contato com esse ID não foi encontrado.")
+            
+    @classmethod
+    def excluir(cls):
+        cls.listar()
+        id = int(input("Qual é o id do contato que você deseja excluir? "))
+        for i in cls.__contatos:
+            if i.get_id() == id:
+                cls.__contatos.remove(i)
+    @classmethod
+    def pesquisar(cls):
+        nome = input("Informe o nome:")
+        for c in cls.__contatos:
+            if c.get_nome().startswith(nome): print(c)
+    @classmethod
+    def aniversariantes(cls):
+        m = int(input("Qual é o mês que deseja saber os aniversariantes? "))
+        for c in cls.__contatos:
+            if m == c.get_nasc().month:
+                cls.__an.append(c.get_nome())
+        for c in cls.__an:
+            print(c)
+            cls.__an = []
+ContatoUI.main()
+
+
+
 
