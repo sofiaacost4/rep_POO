@@ -25,8 +25,8 @@ class Treino:
         return self.__distancia
     def get_tempo(self):
         return self.__tempo
-    def vel_media(self):
-        return (self.__distancia / self.__tempo.seconds)
+    def fim(self):
+        return (self.__distancia / self.__tempo)
     def __str__(self):
         return f"Id: {self.__id}\nData: {self.__data}\nDistância: {self.__distancia}\nTempo: {self.__tempo}"
 
