@@ -7,7 +7,7 @@ class Cliente:
         self.set_senha(senha)
 
     def __str__(self):
-        return f"{self.__id} - {self.__nome} - {self.__email} - {self.__fone}"
+        return f"{self.__id} - {self.__nome} - {self.__email} - {self.__fone} - {self.__senha}"
     
     def get_id(self): return self.__id
     def get_nome(self): return self.__nome
@@ -33,6 +33,7 @@ import json
 
 class ClienteDAO():
     __objetos = []
+    __objetos_listados = []
     @classmethod
     def inserir(cls, obj):
         cls.abrir()
@@ -44,10 +45,19 @@ class ClienteDAO():
         cls.salvar()
 
     @classmethod
+    def listar_clientes(cls):
+        cls.abrir()
+        cls.__objetos_listados = [
+            Cliente(c.get_id(), c.get_nome(), c.get_email(), c.get_fone(), senha="*")
+            for c in cls.__objetos
+        ]
+        return cls.__objetos_listados
+
+    @classmethod
     def listar(cls):
         cls.abrir()
         return cls.__objetos
-
+    
     @classmethod
     def listar_id(cls, id):
         cls.abrir()

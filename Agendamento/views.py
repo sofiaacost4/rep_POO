@@ -7,6 +7,8 @@ class View:
         
     def cliente_listar():
         return ClienteDAO.listar()
+    def cliente_listar_objetos():
+        return ClienteDAO.listar_clientes()
     def cliente_inserir(nome, email, fone, senha):
         cliente = Cliente(0, nome, email, fone, senha)
         ClienteDAO.inserir(cliente)
@@ -66,17 +68,25 @@ class View:
     
     def profissional_listar():
         return ProfissionalDAO.listar()
-    def profissional_inserir(nome, especialidade, conselho):
-        profissional = Profissional(0, nome, especialidade, conselho)
+    def profissional_listar_profissionais():
+        return ProfissionalDAO.listar_profissionais()
+    def profissional_inserir(nome, especialidade, conselho, email, senha):
+        profissional = Profissional(0, nome, especialidade, conselho, email, senha)
         ProfissionalDAO.inserir(profissional)
-    def profissional_atualizar(id, nome, especialidade, conselho):
-        profissional = Profissional(id, nome, especialidade, conselho)
+    def profissional_atualizar(id, nome, especialidade, conselho, email, senha):
+        profissional = Profissional(id, nome, especialidade, conselho, email, senha)
         ProfissionalDAO.atualizar(profissional)
     def profissional_excluir(id):
-        profissional = Profissional(id, "", "", "")
+        profissional = Profissional(id, "", "", "", "", "")
         ProfissionalDAO.excluir(profissional)
     def profissional_listar_id(id):
         profissional = ProfissionalDAO.listar_id(id)
         return profissional
+    def profissional_autenticar(email, senha):
+        for p in View.profissional_listar():
+            if p.get_email() == email and p.get_senha() == senha:
+                return {"id" : p.get_id(), "nome" : p.get_nome()}
+
+
 
 

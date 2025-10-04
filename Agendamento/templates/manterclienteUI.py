@@ -13,7 +13,7 @@ class ManterClienteUI:
         with tab4: ManterClienteUI.excluir()
 
     def listar():
-        clientes = View.cliente_listar()
+        clientes = View.cliente_listar_objetos()
         if len(clientes) == 0: st.write("Nenhum cliente cadastrado")
         else:
             list_dic = []

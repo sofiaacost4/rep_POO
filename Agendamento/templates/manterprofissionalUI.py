@@ -14,7 +14,7 @@ class ManterProfissionalUI:
         with tab4: ManterProfissionalUI.excluir()
 
     def listar():
-        profissionais = View.profissional_listar()
+        profissionais = View.profissional_listar_profissionais()
         if len(profissionais) == 0: st.write("Nenhum profissional cadastrado")
         else:
             list_dic = []
@@ -24,10 +24,12 @@ class ManterProfissionalUI:
 
     def inserir():
         nome = st.text_input("Informe o nome")
+        email = st.text_input("Informe o email")
         especialidade = st.text_input("Informe a especialidade")
         conselho = st.text_input("Informe o conselho")
+        senha = st.text_input("Informe a senha", type="password")
         if st.button("Inserir"):
-            View.profissional_inserir(nome, especialidade, conselho)
+            View.profissional_inserir(nome, email, especialidade, conselho, senha)
             st.success("Profissional inserido com sucesso!")
             time.sleep(2)
             st.rerun()
@@ -38,11 +40,13 @@ class ManterProfissionalUI:
         else:
             op = st.selectbox("Atualização de Profissionais", profissionais)
             nome = st.text_input("Novo nome", op.get_nome())
+            email = st.text_input("Novo email", op.get_email())
             especialidade = st.text_input("Nova especialidade", op.get_especialidade())
             conselho = st.text_input("Novo conselho", op.get_conselho())
+            senha = st.text_input("Nova senha", op.get_senha(), type="password")
             if st.button("Atualizar"):
                 id = op.get_id()
-                View.profissional_atualizar(id, nome, especialidade, conselho)
+                View.profissional_atualizar(id, nome, email, especialidade, conselho, senha)
                 st.success("Profissional atualizado com sucesso")
 
     def excluir():
