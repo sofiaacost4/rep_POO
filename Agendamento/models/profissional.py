@@ -115,4 +115,5 @@ class ProfissionalDAO():
     def salvar(cls):
         with open("profissionais.json", mode="w") as arquivo:
             json.dump(cls.__objetos, arquivo, default = Profissional.to_json)
+            
                 
