@@ -28,6 +28,22 @@ class ManterHorarioUI:
                 dic.append({"id" : obj.get_id(), "data" : obj.get_data(), "confirmado" : obj.get_confirmado(), "cliente" : cliente, "serviço" : servico, "profissional": profissional})
             df = pd.DataFrame(dic)
             st.dataframe(df)
+        return horarios
+    
+    def listar_horarios():
+        horarios = View.horario_listar()
+        if len(horarios) == 0: st.write("Nenhum horário cadastrado")
+        else:
+            dic = []
+            for obj in horarios:
+                cliente = View.cliente_listar_id(obj.get_id_cliente())
+                servico = View.servico_listar_id(obj.get_id_servico())
+                profissional = View.profissional_listar_id(obj.get_id_profissional())
+                if cliente != None: cliente = cliente.get_nome()
+                if servico != None: servico = servico.get_descricao()
+                if profissional != None: profissional = profissional.get_nome()
+                dic.append({"id" : obj.get_id(), "data" : obj.get_data(), "confirmado" : obj.get_confirmado(), "cliente" : cliente, "serviço" : servico, "profissional": profissional})
+        return horarios
 
     def inserir():
         clientes = View.cliente_listar()
@@ -72,7 +88,7 @@ class ManterHorarioUI:
                 if cliente != None: id_cliente = cliente.get_id()
                 if servico != None: id_servico = servico.get_id()
                 if profissional != None: id_profissional = profissional.get_id()
-                View.horario_atualizar(op.get_id(), datetime.strptime(data,"%d/%m/%Y%H:%M"), confirmado, id_cliente, id_servico, id_profissional)
+                View.horario_atualizar(op.get_id(), datetime.strptime(data,"%d/%m/%Y %H:%M"), confirmado, id_cliente, id_servico, id_profissional)
                 st.success("Horário atualizado com sucesso")
 
     def excluir():

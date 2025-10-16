@@ -13,7 +13,7 @@ class PerfilClienteUI:
         type="password")
         if st.button("Atualizar"):
             id = op.get_id()
-            View.cliente_atualizar(id, nome, email, fone, senha)
+            View.cliente_atualizar(id, nome, email, fone)
             st.success("Cliente atualizado com sucesso")
 
 

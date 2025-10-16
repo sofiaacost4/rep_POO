@@ -47,12 +47,11 @@ class ClienteDAO():
     @classmethod
     def listar_clientes(cls):
         cls.abrir()
-        cls.__objetos_listados = [
-            Cliente(c.get_id(), c.get_nome(), c.get_email(), c.get_fone(), senha="*")
-            for c in cls.__objetos
-        ]
-        return cls.__objetos_listados
-
+        dic = []
+        for obj in cls.__objetos:
+            dic.append({"id": obj.get_id(), "nome": obj.get_nome(), "email": obj.get_email(), "fone": obj.get_fone()})
+        return dic
+    
     @classmethod
     def listar(cls):
         cls.abrir()
