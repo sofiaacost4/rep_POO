@@ -24,19 +24,15 @@ class Profissional:
         if id < 0: raise ValueError()
         else: self.__id = id
     def set_nome(self, nome):
-        if nome == "": raise ValueError()
-        else: self.__nome = nome
+        if nome == "": raise ValueError("Insira um nome.")
+        self.__nome = nome
     def set_email(self, email):
-        if email == "": raise ValueError()
+        if email == "": raise ValueError("Insira um email.")
         else: self.__email = email
-    def set_especialidade(self, especialidade):
-        if especialidade == "": raise ValueError()
-        else: self.__especialidade = especialidade
-    def set_conselho(self, conselho):
-        if conselho == "": raise ValueError()
-        else: self.__conselho = conselho
+    def set_especialidade(self, especialidade): self.__especialidade == especialidade
+    def set_conselho(self, conselho): self.__conselho == conselho
     def set_senha(self, senha):
-        if senha == "": raise ValueError()
+        if senha == "": raise ValueError("Insira uma senha.")
         else: self.__senha = senha
 
 

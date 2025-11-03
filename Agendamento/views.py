@@ -14,14 +14,33 @@ class View:
     def cliente_listar_objetos():
         return ClienteDAO.listar_clientes()
     def cliente_inserir(nome, email, fone, senha):
+        for c in View.cliente_listar():
+            if email == "admin":
+                raise ValueError("Você não pode inserir um admin.")
+            if c.get_email() == email:
+                raise ValueError("Este email já é utilizado por um usuário.")
+        for p in View.profissional_listar():
+            if p.get_email() == email:
+                raise ValueError("Este email já é utilizado por um usuário.")
         cliente = Cliente(0, nome, email, fone, senha)
         ClienteDAO.inserir(cliente)
     def cliente_atualizar(id, nome, email, fone, senha):
+        for c in View.cliente_listar():
+            if email == "admin":
+                raise ValueError("Você não pode atualizar um admin.")
+            if c.get_id() != id:
+                if c.get_email() == email:
+                    raise ValueError("Este email já é utilizado por um usuário.")
+        for p in View.profissional_listar():
+            if p.get_email() == email:
+                raise ValueError("Este email já é utilizado por um usuário.")
         cliente = Cliente(id, nome, email, fone, senha)
         ClienteDAO.atualizar(cliente)
     def cliente_excluir(id):
-        cliente = Cliente(id, "", "", "", "")
-        ClienteDAO.excluir(cliente)
+        for h in View.horario_listar():
+                if h.get_id_cliente() == id:
+                    raise ValueError("Esse cliente não pode ser excluído, pois tem horário(s) cadastrado(s).")
+        ClienteDAO.excluir(id)
     def cliente_listar_id(id):
         cliente = ClienteDAO.listar_id(id)
         return cliente
@@ -52,29 +71,40 @@ class View:
         servico = ServicoDAO.listar_id(id)
         return servico
 
-    def horario_inserir(data, confirmado, id_cliente, id_servico, id_profissional):
-        c = Horario(0, data)
-        c.set_confirmado(confirmado)
-        c.set_id_cliente(id_cliente)
-        c.set_id_servico(id_servico)
-        c.set_id_profissional(id_profissional)
-        HorarioDAO.inserir(c)
     def horario_listar():
         r = HorarioDAO.listar()
         r.sort(key = lambda obj : obj.get_data())
         return r
     def horario_listar_id(id):
         horario =  HorarioDAO.listar_id(id)
+    def horario_inserir(data, confirmado, id_cliente, id_servico, id_profissional):
+        for h in View.horario_listar():
+            if h.get_data() == data and h.get_id_profissional() == id_profissional:
+                raise ValueError("Essa data já está cadastrada na agenda desse profissional.")
+        h = Horario(0, data)
+        h.set_confirmado(confirmado)
+        h.set_id_cliente(id_cliente)
+        h.set_id_servico(id_servico)
+        h.set_id_profissional(id_profissional)
+        HorarioDAO.inserir(h)
     def horario_atualizar(id, data, confirmado, id_cliente, id_servico, id_profissional):
-        c = Horario(id, data)
-        c.set_confirmado(confirmado)
-        c.set_id_cliente(id_cliente)
-        c.set_id_servico(id_servico)
-        c.set_id_profissional(id_profissional)
-        HorarioDAO.atualizar(c)
-    def horario_excluir(id):
-        c = Horario(id, None)
-        HorarioDAO.excluir(c)
+        if data == None:
+            raise ValueError("Data não pode ser vazio.")
+        for h in View.horario_listar():
+            if h.get_id() != id and h.get_data() == data and h.get_id_profissional() == id_profissional:
+                raise ValueError("Esta data já está cadastrada na agenda desse profissional.")
+        h = Horario(id, data)
+        h.set_confirmado(confirmado)
+        h.set_id_cliente(id_cliente)
+        h.set_id_servico(id_servico)
+        h.set_id_profissional(id_profissional)
+        HorarioDAO.atualizar(h)
+    def horario_excluir(id, data):
+        for h in View.horario_listar():
+            if h.get_data() != None and h.get_id_cliente() != None and h.get_id_servico() != None and h.get_id_profissional() != None:
+                raise ValueError("Esse horário não pode ser excluído pois já foi agendado.")
+        h = Horario(id, data)
+        HorarioDAO.excluir(h)
     def horario_agendar_horario(id_profissional):
         r = []
         agora = datetime.now()
@@ -97,14 +127,33 @@ class View:
     def profissional_listar_profissionais():
         return ProfissionalDAO.listar_profissionais()
     def profissional_inserir(nome, email, especialidade, conselho, senha):
+        for p in View.profissional_listar():
+            if email == "admin":
+                raise ValueError("Você não pode inserir um admin.")
+            if p.get_email() == email:
+                raise ValueError("Este email já é utilizado por um usuário.")
+        for c in View.cliente_listar():
+            if c.get_email() == email:
+                raise ValueError("Este email já é utilizado por um usuário.")
         profissional = Profissional(0, nome, email, especialidade, conselho, senha)
         ProfissionalDAO.inserir(profissional)
     def profissional_atualizar(id, nome, email, especialidade, conselho, senha):
-        profissional = Profissional(id, nome, email, especialidade, conselho, senha)
-        ProfissionalDAO.atualizar(profissional)
+        for p in View.profissional_listar():
+            if email == "admin":
+                raise ValueError("Você não pode atualizar um admin.")
+            if p.get_id() != id:
+                if p.get_email() == email:
+                    raise ValueError("Este email já é utilizado por um usuário.")
+        for c in View.cliente_listar():
+            if c.get_email() == email:
+                raise ValueError("Este email já é utilizado por um usuário.")
+            profissional = Profissional(id, nome, email, especialidade, conselho, senha)
+            ProfissionalDAO.atualizar(profissional)
     def profissional_excluir(id):
-        profissional = Profissional(id, "", "", "", "", "")
-        ProfissionalDAO.excluir(profissional)
+        for h in View.horario_listar():
+                if h.get_id_profissional() == id:
+                    raise ValueError("Esse profissional não pode ser excluído, pois tem horário(s) cadastrado(s).")
+        ProfissionalDAO.excluir(id)
     def profissional_listar_id(id):
         profissional = ProfissionalDAO.listar_id(id)
         return profissional

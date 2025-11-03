@@ -16,10 +16,13 @@ class AgendarServicoUI:
                 servicos = View.servico_listar()
                 servico = st.selectbox("Informe o serviço", servicos)
                 if st.button("Agendar"):
-                    View.horario_atualizar(horario.get_id(),
-                        horario.get_data(), False,
-                        st.session_state["usuario_id"],
-                        servico.get_id(), profissional.get_id())
-                    st.success("Horário agendado com sucesso")
-                    time.sleep(2)
-                st.rerun()
+                    try:
+                        View.horario_atualizar(horario.get_id(),
+                            horario.get_data(), False,
+                            st.session_state["usuario_id"],
+                            servico.get_id(), profissional.get_id())
+                        st.success("Horário agendado com sucesso")
+                        time.sleep(2)
+                        st.rerun()
+                    except ValueError as erro:
+                        st.error(str(erro))
