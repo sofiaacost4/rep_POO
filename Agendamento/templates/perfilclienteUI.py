@@ -14,9 +14,8 @@ class PerfilClienteUI:
         if st.button("Atualizar"):
             try:
                 id = op.get_id()
-                View.cliente_atualizar(id, nome, email, fone)
+                View.cliente_atualizar(id, nome, email, fone, senha)
                 st.success("Cliente atualizado com sucesso")
             except ValueError as erro:
                 st.error(str(erro))
-
 

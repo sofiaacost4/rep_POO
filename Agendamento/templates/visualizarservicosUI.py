@@ -21,4 +21,3 @@ class VisualizarServicosUI:
         elif len(dic) == 0:
             st.write("Nenhum serviço cadastrado ainda")
 
-

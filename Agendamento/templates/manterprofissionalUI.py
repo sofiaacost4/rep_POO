@@ -17,11 +17,8 @@ class ManterProfissionalUI:
         profissionais = View.profissional_listar_profissionais()
         if len(profissionais) == 0: st.write("Nenhum profissional cadastrado")
         else:
-            list_dic = []
-            for obj in profissionais: list_dic.append(obj.to_json())
-            df = pd.DataFrame(list_dic)
+            df = pd.DataFrame(profissionais)
             st.dataframe(df)
-
     def inserir():
         nome = st.text_input("Informe o nome")
         email = st.text_input("Informe o email")
@@ -36,7 +33,7 @@ class ManterProfissionalUI:
                 st.rerun()
             except ValueError as erro:
                 st.error(str(erro))
-        
+    
     def atualizar():
         profissionais = View.profissional_listar()
         if len(profissionais) == 0: st.write("Nenhum profissional cadastrado")
@@ -67,7 +64,6 @@ class ManterProfissionalUI:
                     st.success("Profissional excluído com sucesso")
                 except ValueError as erro:
                     st.error(str(erro))
-
 
 
 

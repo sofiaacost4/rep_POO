@@ -24,15 +24,15 @@ class Profissional:
         if id < 0: raise ValueError()
         else: self.__id = id
     def set_nome(self, nome):
-        if nome == "": raise ValueError("Insira um nome.")
+        if nome == "": raise ValueError("Insira um nome")
         self.__nome = nome
     def set_email(self, email):
-        if email == "": raise ValueError("Insira um email.")
-        else: self.__email = email
-    def set_especialidade(self, especialidade): self.__especialidade == especialidade
-    def set_conselho(self, conselho): self.__conselho == conselho
+        if email == "": raise ValueError("Insira um email")
+        self.__email = email
+    def set_especialidade(self, especialidade): self.__especialidade = especialidade
+    def set_conselho(self, conselho): self.__conselho = conselho
     def set_senha(self, senha):
-        if senha == "": raise ValueError("Insira uma senha.")
+        if senha == "": raise ValueError("Insira uma senha")
         else: self.__senha = senha
 
 
@@ -68,11 +68,10 @@ class ProfissionalDAO():
     @classmethod
     def listar_profissionais(cls):
         cls.abrir()
-        cls.__objetos_listados = [
-            Profissional(p.get_id(), p.get_nome(), p.get_email(), p.get_especialidade(), p.get_conselho(), senha="*")
-            for p in cls.__objetos
-        ]
-        return cls.__objetos_listados
+        dic = []
+        for obj in cls.__objetos:
+            dic.append({"id": obj.get_id(), "nome": obj.get_nome(), "email": obj.get_email(), "especialidade": obj.get_especialidade(), "conselho": obj.get_conselho()})
+        return dic
     @classmethod
     def listar_id(cls, id):
         cls.abrir()

@@ -15,9 +15,9 @@ class VisualizarAgendaUI:
             if servico != None: servico = servico.get_descricao()
             if profissional != None: profissional = profissional.get_nome()
             if obj.get_id_profissional() == (st.session_state["usuario_id"]):
+
                 dic.append({"id" : obj.get_id(), "data" : obj.get_data(), "confirmado" : obj.get_confirmado(), "cliente" : cliente, "serviço" : servico})
         if dic:
             df = pd.DataFrame(dic)
             st.dataframe(df)
-
 

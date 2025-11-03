@@ -27,28 +27,30 @@ class ManterClienteUI:
         if st.button("Inserir"):
             try:
                 View.cliente_inserir(nome, email, fone, senha)
-                st.success("Cliente inserido com sucesso")
+                st.success("Cliente inserido com sucesso!")
                 time.sleep(2)
                 st.rerun()
             except ValueError as erro:
                 st.error(str(erro))
-    
+                
     def atualizar():
-        clientes = View.cliente_listar()
-        if len(clientes) == 0: st.write("Nenhum cliente cadastrado")
-        else:
-            op = st.selectbox("Atualização de Clientes", clientes)
-            nome = st.text_input("Novo nome", op.get_nome())
-            email = st.text_input("Novo e-mail", op.get_email())
-            fone = st.text_input("Novo fone", op.get_fone())
-            senha = st.text_input("Nova senha", op.get_senha(), type="password")
-            if st.button("Atualizar"):
-                try:
-                    id = op.get_id()
-                    View.cliente_atualizar(id, nome, email, fone, senha)
-                    st.success("Cliente atualizado com sucesso")
-                except ValueError as erro:
-                    st.error(str(erro))
+        clientes = [c for c in View.cliente_listar() if c.get_email() != "admin"]
+        if len(clientes) == 0:
+            st.write("Nenhum cliente cadastrado")
+            return
+        op = st.selectbox("Selecione o cliente para atualizar", clientes)
+        nome = st.text_input("Novo nome", op.get_nome())
+        email = st.text_input("Novo e-mail", op.get_email())
+        fone = st.text_input("Novo fone", op.get_fone())
+        senha = st.text_input("Nova senha", op.get_senha(), type="password")
+        if st.button("Atualizar"):
+            try:
+                id = op.get_id()
+                View.cliente_atualizar(id, nome, email, fone, senha)
+                st.success("Cliente atualizado com sucesso!")
+                time.sleep(2)
+            except ValueError as erro:
+                st.error(str(erro))
 
     def excluir():
         clientes = View.cliente_listar()
@@ -56,9 +58,13 @@ class ManterClienteUI:
         else:
             op = st.selectbox("Exclusão de Clientes", clientes)
             if st.button("Excluir"):
-                id = op.get_id()
-                View.cliente_excluir(id)
-                st.success("Cliente excluído com sucesso")
-
+                try:
+                    id = op.get_id()
+                    View.cliente_excluir(id)
+                    st.success("Cliente excluído com sucesso")
+                    time.sleep(2)
+                except ValueError as erro:
+                    st.error(str(erro))
+                    
 
 
