@@ -24,12 +24,16 @@ class ManterServicoUI:
 
     def inserir():
         descricao = st.text_input("Informe a descrição")
-        valor = st.number_input("Informe o valor",format="%.2f") 
+        valor = st.number_input("Informe o valor",format="%.2f")
+        parcelas = st.number_input("Informe em quantas vezes o valor do serviço poderá ser parcelado (Máximo 12)")
         if st.button("Inserir"):
-            View.servico_inserir(descricao, valor)
-            st.success("Serviço cadastrado com sucesso")
-            time.sleep(2)
-            st.rerun()
+            try:
+                View.servico_inserir(descricao, valor, parcelas)
+                st.success("Serviço cadastrado com sucesso")
+                time.sleep(2)
+                st.rerun()
+            except ValueError as erro:
+                st.error(str(erro))
     
     def atualizar():
         servicos = View.servico_listar()

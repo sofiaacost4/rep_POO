@@ -2,6 +2,7 @@ from models.servico import Servico, ServicoDAO
 from models.cliente import Cliente, ClienteDAO
 from models.horario import Horario, HorarioDAO
 from models.profissional import Profissional, ProfissionalDAO
+from models.pagamento import Pagamento, PagamentoDAO
 from datetime import datetime
 from datetime import timedelta
 
@@ -71,14 +72,14 @@ class View:
         r = ServicoDAO.listar()
         r.sort(key = lambda obj : obj.get_descricao())
         return r
-    def servico_inserir(descricao, valor):
-        servico = Servico(0, descricao, valor)
+    def servico_inserir(descricao, valor, parcelas):
+        servico = Servico(0, descricao, valor, parcelas)
         ServicoDAO.inserir(servico)
-    def servico_atualizar(id, descricao, valor):
-        servico = Servico(id, descricao, valor)
+    def servico_atualizar(id, descricao, valor, parcelas):
+        servico = Servico(id, descricao, valor, parcelas)
         ServicoDAO.atualizar(servico)
     def servico_excluir(id):
-        servico = Servico(id, "", "")
+        servico = Servico(id, "", 0, 1)
         ServicoDAO.excluir(servico)
     def servico_listar_id(id):
         servico = ServicoDAO.listar_id(id)
@@ -155,6 +156,11 @@ class View:
         h = View.horario_listar_id(id_horario)
         if not h:
             return False
+        pagamento = View.pagamento_listar_por_horario(h.get_id())
+        estado_pagamento = pagamento.get_estado() if pagamento else "Pendente"
+        if estado_pagamento is None or estado_pagamento == "Pendente":
+            raise ValueError("Pagamento pendente. O profissional não pode confirmar o serviço.")
+
         h.set_confirmado(True)
         View.horario_atualizar(
             h.get_id(),
@@ -225,6 +231,47 @@ class View:
         while x <= ultimo_horario:
             View.horario_inserir(x, False, None, None, id)
             x += intervalo_min
+    from models.pagamento import Pagamento, PagamentoDAO
+
+
+    def pagamento_confirmar(id_horario, parcelas_escolhidas):
+        h = View.horario_listar_id(id_horario)
+        servico = View.servico_listar_id(h.get_id_servico())
+        valor_total = servico.get_valor()
+        parcelas_totais = servico.get_parcelas()
+
+        pagamento_existente = PagamentoDAO.listar_por_horario(id_horario)
+
+        # Se ainda não existe pagamento, cria um novo
+        if pagamento_existente is None:
+            valor_parcela = valor_total / parcelas_escolhidas
+            p = Pagamento(0, id_horario, valor_total, parcelas_totais, parcelas_escolhidas, 1, valor_parcela, 
+                          "Pago" if parcelas_escolhidas == 1 else "Pago parcialmente")
+            PagamentoDAO.inserir(p)
+            return p
+
+        # Se já existe, paga mais uma parcela
+        else:
+            pagamento_existente.pagar_parcela()
+            PagamentoDAO.atualizar(pagamento_existente)
+            return pagamento_existente
+    def pagamento_listar_por_horario(id_horario):
+        p = PagamentoDAO.listar_por_horario(id_horario)
+        if p:
+            if p.atualizar_parcelas_automaticamente():
+                PagamentoDAO.atualizar(p)
+        return p
+    def pagamentos_atualizar_todos():
+        pagamentos = PagamentoDAO.listar()
+        houve_atualizacao = False
+
+        for p in pagamentos:
+            if p.atualizar_parcelas_automaticamente():
+                PagamentoDAO.atualizar(p)
+                houve_atualizacao = True
+
+        if houve_atualizacao:
+            PagamentoDAO.salvar()
 
 
 
