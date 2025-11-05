@@ -239,18 +239,13 @@ class View:
         servico = View.servico_listar_id(h.get_id_servico())
         valor_total = servico.get_valor()
         parcelas_totais = servico.get_parcelas()
-
         pagamento_existente = PagamentoDAO.listar_por_horario(id_horario)
-
-        # Se ainda não existe pagamento, cria um novo
         if pagamento_existente is None:
             valor_parcela = valor_total / parcelas_escolhidas
             p = Pagamento(0, id_horario, valor_total, parcelas_totais, parcelas_escolhidas, 1, valor_parcela, 
                           "Pago" if parcelas_escolhidas == 1 else "Pago parcialmente")
             PagamentoDAO.inserir(p)
             return p
-
-        # Se já existe, paga mais uma parcela
         else:
             pagamento_existente.pagar_parcela()
             PagamentoDAO.atualizar(pagamento_existente)
@@ -258,7 +253,7 @@ class View:
     def pagamento_listar_por_horario(id_horario):
         p = PagamentoDAO.listar_por_horario(id_horario)
         if p:
-            if p.atualizar_parcelas_automaticamente():
+            if p.atualizar_parcelas():
                 PagamentoDAO.atualizar(p)
         return p
     def pagamentos_atualizar_todos():
@@ -266,7 +261,7 @@ class View:
         houve_atualizacao = False
 
         for p in pagamentos:
-            if p.atualizar_parcelas_automaticamente():
+            if p.atualizar_parcelas():
                 PagamentoDAO.atualizar(p)
                 houve_atualizacao = True
 

@@ -34,23 +34,31 @@ class Pagamento:
     def set_estado(self, estado): self.__estado = estado
     def set_data_ultima_parcela(self, data): self.__data_ultima_parcela = data
 
-def atualizar_parcelas_automaticamente(self):
-    # Se já está totalmente pago, não faz nada
-    if self.__estado == "Pago":
+    def atualizar_parcelas(self):
+        if self.__estado == "Pago":
+            return False
+        agora = datetime.now()
+        diferenca = agora - self.__data_ultima_parcela
+        if diferenca.days >= 30 and self.__parcelas_pagas < self.__parcelas_escolhidas:
+            self.__parcelas_pagas += 1
+            self.__data_ultima_parcela = agora
+            if self.__parcelas_pagas >= self.__parcelas_escolhidas: self.__estado = "Pago"
+            else: self.__estado = "Pago parcialmente"
+            return True
         return False
-
-    agora = datetime.now()
-    diferenca = agora - self.__data_ultima_parcela
-
-    if diferenca.days >= 30 and self.__parcelas_pagas < self.__parcelas_escolhidas:
-        self.__parcelas_pagas += 1
-        self.__data_ultima_parcela = agora
-        if self.__parcelas_pagas >= self.__parcelas_escolhidas:
-            self.__estado = "Pago"
-        else:
-            self.__estado = "Pago parcialmente"
-        return True
-    return False
+    
+    def pagar_parcela(self):
+        from datetime import datetime
+        if self.__estado == "Pago":
+            raise ValueError("Este serviço já foi pago.")
+        if self.__parcelas_pagas < self.__parcelas_escolhidas:
+            self.__parcelas_pagas += 1
+            self.__data_ultima_parcela = datetime.now().strftime("%d/%m/%Y %H:%M")
+            if self.__parcelas_pagas == self.__parcelas_escolhidas:
+                self.__estado = "Pago"
+            else:
+                self.__estado = "Pago parcialmente"
+        else: raise ValueError("Todas as parcelas já foram pagas.")
 
     def to_json(self):
         return {
