@@ -15,7 +15,8 @@ class ConfirmarPagamentoUI:
             servico = View.servico_listar_id(h.get_id_servico())
             pagamento = View.pagamento_listar_por_horario(h.get_id())
             estado_pag = pagamento.get_estado() if pagamento else "Pendente"
-            opcoes.append(f"{h.get_data().strftime('%d/%m/%Y %H:%M')} - {servico.get_descricao()} ({estado_pag})")
+            if estado_pag == "Pendente":
+                opcoes.append(f"{h.get_data().strftime('%d/%m/%Y %H:%M')} - {servico.get_descricao()} ({estado_pag})")
         escolha = st.selectbox("Selecione o serviço", opcoes)
         horario_escolhido = horarios[opcoes.index(escolha)]
         servico = View.servico_listar_id(horario_escolhido.get_id_servico())

@@ -105,11 +105,12 @@ class View:
         HorarioDAO.inserir(h)
 
     def horario_atualizar(id, data, confirmado, id_cliente, id_servico, id_profissional):
-        if data == None:
-            raise ValueError("Data não pode ser vazio.")
-        for h in View.horario_listar():
-            if h.get_id() != id and h.get_data() == data and h.get_id_profissional() == id_profissional:
+        horarios_cliente = View.horario_ver_servicos(id_cliente)
+        for h1 in View.horario_listar():
+            if h1.get_id() != id and h1.get_data() == data and h1.get_id_profissional() == id_profissional:
                 raise ValueError("Esta data já está cadastrada na agenda desse profissional.")
+        for h2 in horarios_cliente:
+                if data == h2.get_data(): raise ValueError("Você já tem um horário agendado nessa data.")
         h = Horario(id, data)
         h.set_confirmado(confirmado)
         h.set_id_cliente(id_cliente)

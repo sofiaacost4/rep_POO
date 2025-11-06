@@ -61,6 +61,10 @@ class Pagamento:
         else: raise ValueError("Todas as parcelas já foram pagas.")
 
     def to_json(self):
+        if isinstance(self.__data_ultima_parcela, str):
+            self.__data_ultima_parcela = self.__data_ultima_parcela
+        else:
+            self.__data_ultima_parcela = self.__data_ultima_parcela.strftime("%d/%m/%Y %H:%M")
         return {
             "id": self.__id,
             "id_horario": self.__id_horario,
@@ -70,7 +74,7 @@ class Pagamento:
             "parcelas_pagas": self.__parcelas_pagas,
             "valor_parcela": self.__valor_parcela,
             "estado": self.__estado,
-            "data_ultima_parcela": self.__data_ultima_parcela.strftime("%d/%m/%Y %H:%M")
+            "data_ultima_parcela": self.__data_ultima_parcela
         }
 
     @staticmethod
@@ -91,7 +95,6 @@ class Pagamento:
         )
 
 class PagamentoDAO(DAO):
-    _objetos = []
 
     @classmethod
     def listar_por_horario(cls, id_horario):
