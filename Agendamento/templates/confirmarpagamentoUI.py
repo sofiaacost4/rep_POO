@@ -28,7 +28,7 @@ class ConfirmarPagamentoUI:
         parcelas_escolhidas = st.slider("Escolha o número de parcelas", 1, max_parcelas, 1)
         valor_parcela = valor_total / parcelas_escolhidas
         st.info(f"Você pagará {parcelas_escolhidas}x de R$ {valor_parcela:.2f}")
-        if st.button("Confirmar Pagamento", type="primary"):
+        if st.button("Confirmar Pagamento"):
             try:
                 p = View.pagamento_confirmar(horario_escolhido.get_id(), parcelas_escolhidas)
                 st.success(f"Pagamento {p.get_estado()} com sucesso!")

@@ -6,7 +6,7 @@ class LoginUI:
         st.header("Entrar no Sistema")
         email = st.text_input("Informe o e-mail")
         senha = st.text_input("Informe a senha", type="password")
-        if st.button("Entrar", type="primary"):
+        if st.button("Entrar"):
             p = View.profissional_autenticar(email, senha)
             c = View.cliente_autenticar(email, senha)
             if c == None and p == None: st.error("E-mail ou senha inválidos")
